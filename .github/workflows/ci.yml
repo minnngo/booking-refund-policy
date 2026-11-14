@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: check (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v5
+
+      # package.json의 packageManager(pnpm@10.25.0)를 읽어 같은 버전을 설치한다.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+
+      - name: CLI smoke test (빌드 결과물로 실행)
+        run: |
+          node dist/bin.js --amount 49000 \
+            --starts-at 2026-11-20T15:00:00+09:00 \
+            --now 2026-11-19T16:00:00+09:00 --json
+
+      - name: 배포 파일 목록 확인
+        run: npm pack --dry-run

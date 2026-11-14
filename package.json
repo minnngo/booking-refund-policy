@@ -1,0 +1,43 @@
+{
+  "name": "booking-refund-policy",
+  "version": "0.1.0",
+  "description": "예약 서비스의 시간 구간별 환불 계산과, 환불 응답이 끊겼을 때 이중 환불 없이 상태를 확정하는 TypeScript 라이브러리 · CLI",
+  "keywords": ["refund", "booking", "payments", "idempotency", "toss-payments"],
+  "license": "UNLICENSED",
+  "author": "구민교 (https://github.com/minnngo)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minnngo/booking-refund-policy.git"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "refund-quote": "./dist/bin.js"
+  },
+  "files": ["dist"],
+  "engines": {
+    "node": ">=22.18"
+  },
+  "packageManager": "pnpm@10.25.0",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "node --test \"tests/**/*.test.ts\"",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
+    "quote": "node src/bin.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^22.18.0",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4"
+  }
+}
